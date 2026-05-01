@@ -37,14 +37,14 @@ Docker 镜像会排除本地依赖、日志、运行密钥、备份文件和临�
 默认镜像地址：
 
 ```bash
-ghcr.io/endlessjy/main
+ghcr.io/endlessjy/hack-chat
 ```
 
 拉取示例：
 
 ```bash
-docker pull ghcr.io/endlessjy/main:latest
-docker run --rm -p 3000:3000 -p 6060:6060 ghcr.io/endlessjy/main:latest
+docker pull ghcr.io/endlessjy/hack-chat:latest
+docker run --rm -p 3000:3000 -p 6060:6060 ghcr.io/endlessjy/hack-chat:latest
 ```
 
 镜像包已公开，拉取时不需要 GitHub Token。
