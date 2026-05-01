@@ -12,13 +12,12 @@ permissions:
   contents: read
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_REPOSITORY != '' && secrets.DOCKERHUB_REPOSITORY || format('{0}/hack-chat', secrets.DOCKERHUB_USERNAME) }}
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     steps:
       - name: Checkout
@@ -32,6 +31,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Prepare test keys
+        run: |
+          printf '%s\n' 'ci-session-key-for-tests-only' > session.key
+          printf '%s\n' 'ci-salt-key-for-tests-only' > salt.key
 
       - name: Run tests
         run: npm run test
@@ -47,17 +51,57 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Resolve image settings
+        id: image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_REPOSITORY: ${{ secrets.DOCKERHUB_REPOSITORY }}
+        run: |
+          if [ -n "$DOCKERHUB_REPOSITORY" ]; then
+            image="$DOCKERHUB_REPOSITORY"
+          elif [ -n "$DOCKERHUB_USERNAME" ]; then
+            image="$DOCKERHUB_USERNAME/hack-chat"
+          else
+            image="hack-chat"
+          fi
+
+          can_push=false
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            can_push=true
+          fi
+
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "can_push=$can_push" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: ${{ steps.image.outputs.image }}:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Docker Hub secrets missing
+        if: steps.image.outputs.can_push != 'true'
+        run: |
+          echo "::warning::Docker image was built, but Docker Hub upload was skipped because DOCKERHUB_USERNAME and DOCKERHUB_TOKEN are not configured."
+
       - name: Log in to Docker Hub
+        if: steps.image.outputs.can_push == 'true'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract Docker metadata
+        if: steps.image.outputs.can_push == 'true'
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: ${{ steps.image.outputs.image }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch
@@ -66,6 +110,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
 
       - name: Build and push
+        if: steps.image.outputs.can_push == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
