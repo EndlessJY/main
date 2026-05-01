@@ -132,5 +132,13 @@ dist
 session.key
 salt.key
 config.json
+backups/
+*.bak*
+*.fixemoji.*
+*.composer*
+*.viewportfix.*
+*.responsivefix.*
+*.cleancomposer.*
+*.v10fix.*
 commands/admin/bomb.js
 commands/mod/uwuify.js

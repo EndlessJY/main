@@ -54,7 +54,7 @@ export async function run({
   if (!verifyNickname(newNick)) {
     return server.reply({
       cmd: 'warn',
-      text: 'Nickname must consist of up to 24 letters, numbers, and underscores',
+      text: '昵称需为 1-24 个字符，可包含中文、英文、数字、下划线和短横线',
       id: Errors.Join.INVALID_NICK,
       channel, // @todo Multichannel
     }, socket);
@@ -173,12 +173,14 @@ export function nickCheck({
 
     // if there is no nickname target parameter
     if (!input[1]) {
-      return server.reply({
+      server.reply({
         cmd: 'warn',
-        text: 'Nickname must consist of up to 24 letters, numbers, and underscores',
+        text: '昵称需为 1-24 个字符，可包含中文、英文、数字、下划线和短横线',
         id: Errors.Join.INVALID_NICK,
         channel: socket.channel, // @todo Multichannel
       }, socket);
+
+      return false;
     }
 
     const newNick = input[1].replace(/@/g, '');

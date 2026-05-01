@@ -252,7 +252,7 @@ describe('Checking dumb module', () => {
       },
     });
 
-    expect(resp).to.be.true;
+    expect(resp).to.be.false;
   });
 
   it('should validate v2 clients channel param', async () => {
@@ -270,7 +270,7 @@ describe('Checking dumb module', () => {
       },
     });
 
-    expect(resp).to.be.true;
+    expect(resp).to.be.false;
   });
 
   it('should give warning if user is missing', async () => {
@@ -336,7 +336,7 @@ describe('Checking dumb module', () => {
 
     mocks.plebSocket = origPlebSocket;
 
-    expect(resp).to.be.true;
+    expect(resp).to.be.false;
   });
 
   it('should validate v1 clients nick param', async () => {
@@ -357,11 +357,13 @@ describe('Checking dumb module', () => {
 
     mocks.plebSocket = origPlebSocket;
 
-    expect(resp).to.be.true;
+    expect(resp).to.be.false;
   });
 
   it('should handle v1 output', async () => {
     const origPlebSocket = {...mocks.plebSocket};
+    const origFindSockets = mocks.server.findSockets;
+    mocks.server.findSockets = () => [mocks.plebSocket];
     mocks.core.muzzledHashes['testHash'] = true;
     mocks.plebSocket.hcProtocol = 1;
     
@@ -377,6 +379,7 @@ describe('Checking dumb module', () => {
     });
 
     mocks.plebSocket = origPlebSocket;
+    mocks.server.findSockets = origFindSockets;
 
     expect(resp).to.be.false;
   });

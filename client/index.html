@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta charset="utf-8">
   <title>hack.chat</title>
   <link rel="manifest" href="manifest.json">
@@ -28,9 +28,107 @@
   </article>
   <footer id="footer">
     <div class="container">
-      <form id="chatform" class="message">
+      <form id="chatform" action="javascript:void(0);">
+      <div id="composerbar">
+        <button id="emojibutton" type="button" aria-label="Emoji">😀</button>
+        <div id="emojipicker" hidden>
+          <button type="button" class="emoji-item" data-emoji="😀">😀</button>
+          <button type="button" class="emoji-item" data-emoji="😃">😃</button>
+          <button type="button" class="emoji-item" data-emoji="😄">😄</button>
+          <button type="button" class="emoji-item" data-emoji="😁">😁</button>
+          <button type="button" class="emoji-item" data-emoji="😆">😆</button>
+          <button type="button" class="emoji-item" data-emoji="😅">😅</button>
+          <button type="button" class="emoji-item" data-emoji="😂">😂</button>
+          <button type="button" class="emoji-item" data-emoji="🤣">🤣</button>
+          <button type="button" class="emoji-item" data-emoji="😊">😊</button>
+          <button type="button" class="emoji-item" data-emoji="😇">😇</button>
+          <button type="button" class="emoji-item" data-emoji="🙂">🙂</button>
+          <button type="button" class="emoji-item" data-emoji="🙃">🙃</button>
+          <button type="button" class="emoji-item" data-emoji="😉">😉</button>
+          <button type="button" class="emoji-item" data-emoji="😌">😌</button>
+          <button type="button" class="emoji-item" data-emoji="😍">😍</button>
+          <button type="button" class="emoji-item" data-emoji="🥰">🥰</button>
+          <button type="button" class="emoji-item" data-emoji="😘">😘</button>
+          <button type="button" class="emoji-item" data-emoji="😗">😗</button>
+          <button type="button" class="emoji-item" data-emoji="😙">😙</button>
+          <button type="button" class="emoji-item" data-emoji="😚">😚</button>
+          <button type="button" class="emoji-item" data-emoji="😋">😋</button>
+          <button type="button" class="emoji-item" data-emoji="😛">😛</button>
+          <button type="button" class="emoji-item" data-emoji="😝">😝</button>
+          <button type="button" class="emoji-item" data-emoji="😜">😜</button>
+          <button type="button" class="emoji-item" data-emoji="🤪">🤪</button>
+          <button type="button" class="emoji-item" data-emoji="🤨">🤨</button>
+          <button type="button" class="emoji-item" data-emoji="🧐">🧐</button>
+          <button type="button" class="emoji-item" data-emoji="🤓">🤓</button>
+          <button type="button" class="emoji-item" data-emoji="😎">😎</button>
+          <button type="button" class="emoji-item" data-emoji="🥸">🥸</button>
+          <button type="button" class="emoji-item" data-emoji="🤩">🤩</button>
+          <button type="button" class="emoji-item" data-emoji="🥳">🥳</button>
+          <button type="button" class="emoji-item" data-emoji="😏">😏</button>
+          <button type="button" class="emoji-item" data-emoji="😒">😒</button>
+          <button type="button" class="emoji-item" data-emoji="😞">😞</button>
+          <button type="button" class="emoji-item" data-emoji="😔">😔</button>
+          <button type="button" class="emoji-item" data-emoji="😟">😟</button>
+          <button type="button" class="emoji-item" data-emoji="😕">😕</button>
+          <button type="button" class="emoji-item" data-emoji="🙁">🙁</button>
+          <button type="button" class="emoji-item" data-emoji="☹️">☹️</button>
+          <button type="button" class="emoji-item" data-emoji="😣">😣</button>
+          <button type="button" class="emoji-item" data-emoji="😖">😖</button>
+          <button type="button" class="emoji-item" data-emoji="😫">😫</button>
+          <button type="button" class="emoji-item" data-emoji="😩">😩</button>
+          <button type="button" class="emoji-item" data-emoji="🥺">🥺</button>
+          <button type="button" class="emoji-item" data-emoji="😢">😢</button>
+          <button type="button" class="emoji-item" data-emoji="😭">😭</button>
+          <button type="button" class="emoji-item" data-emoji="😤">😤</button>
+          <button type="button" class="emoji-item" data-emoji="😠">😠</button>
+          <button type="button" class="emoji-item" data-emoji="😡">😡</button>
+          <button type="button" class="emoji-item" data-emoji="🤬">🤬</button>
+          <button type="button" class="emoji-item" data-emoji="🤯">🤯</button>
+          <button type="button" class="emoji-item" data-emoji="😳">😳</button>
+          <button type="button" class="emoji-item" data-emoji="🥵">🥵</button>
+          <button type="button" class="emoji-item" data-emoji="🥶">🥶</button>
+          <button type="button" class="emoji-item" data-emoji="😱">😱</button>
+          <button type="button" class="emoji-item" data-emoji="😨">😨</button>
+          <button type="button" class="emoji-item" data-emoji="😰">😰</button>
+          <button type="button" class="emoji-item" data-emoji="😥">😥</button>
+          <button type="button" class="emoji-item" data-emoji="😓">😓</button>
+          <button type="button" class="emoji-item" data-emoji="🤗">🤗</button>
+          <button type="button" class="emoji-item" data-emoji="🤔">🤔</button>
+          <button type="button" class="emoji-item" data-emoji="🤭">🤭</button>
+          <button type="button" class="emoji-item" data-emoji="🫢">🫢</button>
+          <button type="button" class="emoji-item" data-emoji="🫣">🫣</button>
+          <button type="button" class="emoji-item" data-emoji="🤫">🤫</button>
+          <button type="button" class="emoji-item" data-emoji="🤥">🤥</button>
+          <button type="button" class="emoji-item" data-emoji="😶">😶</button>
+          <button type="button" class="emoji-item" data-emoji="😐">😐</button>
+          <button type="button" class="emoji-item" data-emoji="😑">😑</button>
+          <button type="button" class="emoji-item" data-emoji="😬">😬</button>
+          <button type="button" class="emoji-item" data-emoji="🙄">🙄</button>
+          <button type="button" class="emoji-item" data-emoji="😯">😯</button>
+          <button type="button" class="emoji-item" data-emoji="😦">😦</button>
+          <button type="button" class="emoji-item" data-emoji="😧">😧</button>
+          <button type="button" class="emoji-item" data-emoji="😮">😮</button>
+          <button type="button" class="emoji-item" data-emoji="😲">😲</button>
+          <button type="button" class="emoji-item" data-emoji="🥱">🥱</button>
+          <button type="button" class="emoji-item" data-emoji="😴">😴</button>
+          <button type="button" class="emoji-item" data-emoji="🤤">🤤</button>
+          <button type="button" class="emoji-item" data-emoji="😪">😪</button>
+          <button type="button" class="emoji-item" data-emoji="😵">😵</button>
+          <button type="button" class="emoji-item" data-emoji="😵‍💫">😵‍💫</button>
+          <button type="button" class="emoji-item" data-emoji="🤐">🤐</button>
+          <button type="button" class="emoji-item" data-emoji="🥴">🥴</button>
+          <button type="button" class="emoji-item" data-emoji="🤢">🤢</button>
+          <button type="button" class="emoji-item" data-emoji="🤮">🤮</button>
+          <button type="button" class="emoji-item" data-emoji="🤧">🤧</button>
+          <button type="button" class="emoji-item" data-emoji="😷">😷</button>
+          <button type="button" class="emoji-item" data-emoji="🤒">🤒</button>
+          <button type="button" class="emoji-item" data-emoji="🤕">🤕</button>
+          <button type="button" class="emoji-item" data-emoji="🤑">🤑</button>
+        </div>
         <textarea id="chatinput" type="text" autocomplete="off" autofocus></textarea>
-      </form>
+        <button id="sendbutton" type="button" aria-label="Send">Send</button>
+      </div>
+    </form>
     </div>
   </footer>
   <nav id="sidebar">

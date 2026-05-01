@@ -87,7 +87,7 @@ export async function run({
   if (verifyNickname(nick, socket) !== true) {
     return server.reply({
       cmd: 'warn',
-      text: 'Nickname must consist of up to 24 letters, numbers, and underscores',
+      text: '昵称需为 1-24 个字符，可包含中文、英文、数字、下划线和短横线',
       id: Errors.Join.INVALID_NICK,
       channel: false, // @todo Multichannel, false for global event
     }, socket);

@@ -6,7 +6,6 @@
   * @module claimchannel
   */
 
-import captcha from 'ascii-captcha';
 import {
   isModerator,
   getUserDetails,
@@ -85,25 +84,6 @@ export async function run({
     id: Errors.Global.PERMISSION,
     channel: socket.channel, // @todo Multichannel
   }, socket);
-
-  socket.claimCaptcha = {
-    solution: captcha.generateRandomText(7),
-  };
-
-  server.reply({
-    cmd: 'warn',
-    text: 'Enter the following to take ownership (case-sensitive):',
-    id: Errors.Captcha.MUST_SOLVE,
-    channel: socket.channel, // @todo Multichannel
-  }, socket);
-
-  server.reply({
-    cmd: 'captcha',
-    text: captcha.word2Transformedstr(socket.claimCaptcha.solution),
-    channel: socket.channel, // @todo Multichannel
-  }, socket);
-
-  return true;
 }
 
 /**

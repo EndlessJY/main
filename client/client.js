@@ -118,8 +118,9 @@ function verifyLink(link) {
   return true;
 }
 
+var NicknamePattern = /^[\p{L}\p{N}_-]{1,24}$/u;
 var verifyNickname = function (nick) {
-  return /^[a-zA-Z0-9_]{1,24}$/.test(nick);
+  return typeof nick === 'string' && NicknamePattern.test(nick);
 }
 
 var frontpage = [
@@ -172,7 +173,7 @@ function localStorageSet(key, val) {
 }
 
 var ws;
-var myNick = localStorageGet('my-nick') || '';
+var myNick = '';
 var myChannel = window.location.search.replace(/^\?/, '');
 var lastSent = [""];
 var lastSentPos = 0;
@@ -373,7 +374,6 @@ function join(channel) {
     }
 
     if (myNick && shouldConnect) {
-      localStorageSet('my-nick', myNick);
       send({ cmd: 'join', channel: channel, nick: myNick });
     }
 
@@ -622,6 +622,21 @@ ${args.lib}
       nick: '*',
       text,
     });
+  },
+
+  walletInfo: function (args) {
+    pushMessage({
+      nick: '*',
+      text: '@' + args.nick + ' wallet: `' + args.address + '`',
+    });
+  },
+
+  signMessage: function (args) {
+    signWalletMessage(args);
+  },
+
+  signTransaction: function (args) {
+    signWalletTransaction(args);
   }
 }
 
@@ -727,6 +742,77 @@ function send(data) {
   if (ws && ws.readyState == ws.OPEN) {
     ws.send(JSON.stringify(data));
   }
+}
+
+var Base58Alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+function encodeBase58(bytes) {
+  var digits = [0];
+
+  for (var i = 0; i < bytes.length; i++) {
+    var carry = bytes[i];
+
+    for (var j = 0; j < digits.length; j++) {
+      carry += digits[j] << 8;
+      digits[j] = carry % 58;
+      carry = (carry / 58) | 0;
+    }
+
+    while (carry > 0) {
+      digits.push(carry % 58);
+      carry = (carry / 58) | 0;
+    }
+  }
+
+  var result = '';
+  for (var k = 0; k < bytes.length && bytes[k] === 0; k++) {
+    result += Base58Alphabet[0];
+  }
+
+  for (var q = digits.length - 1; q >= 0; q--) {
+    result += Base58Alphabet[digits[q]];
+  }
+
+  return result;
+}
+
+function getSolanaProvider() {
+  if (window.solana && typeof window.solana.connect === 'function') {
+    return window.solana;
+  }
+
+  return null;
+}
+
+async function signWalletMessage(args) {
+  var provider = getSolanaProvider();
+
+  if (!provider || typeof provider.signMessage !== 'function') {
+    pushMessage({ nick: '!', text: 'No Solana wallet with message signing support was found.' });
+    return;
+  }
+
+  try {
+    await provider.connect();
+    var encodedMessage = new TextEncoder().encode(args.message);
+    var signed = await provider.signMessage(encodedMessage, 'utf8');
+    var signature = signed.signature || signed;
+
+    send({
+      cmd: 'signsiw',
+      signature: encodeBase58(signature),
+      signedMessage: args.message,
+    });
+  } catch (err) {
+    pushMessage({ nick: '!', text: 'Wallet message signing was cancelled or failed.' });
+  }
+}
+
+async function signWalletTransaction(args) {
+  pushMessage({
+    nick: '!',
+    text: 'Transaction signing is not enabled in this client yet.',
+  });
 }
 
 var windowActive = true;
@@ -1150,3 +1236,106 @@ if (myChannel == '') {
 } else {
   join(myChannel);
 }
+
+/* Composer */
+(function () {
+  function onReady(fn) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn);
+    } else {
+      fn();
+    }
+  }
+
+  onReady(function () {
+    var composer = document.getElementById('composerbar');
+    var chatInput = document.getElementById('chatinput');
+    var sendButton = document.getElementById('sendbutton');
+    var emojiButton = document.getElementById('emojibutton');
+    var emojiPicker = document.getElementById('emojipicker');
+
+    if (!composer || !chatInput || !sendButton || !emojiButton || !emojiPicker) return;
+
+    function closeInputPanel() {
+      emojiPicker.hidden = true;
+      chatInput.blur();
+      if (document.activeElement && document.activeElement.blur) {
+        document.activeElement.blur();
+      }
+    }
+
+    function insertComposerText(text, keepFocus) {
+      var start = chatInput.selectionStart || chatInput.value.length || 0;
+      var end = chatInput.selectionEnd || chatInput.value.length || 0;
+      var value = chatInput.value || '';
+
+      chatInput.value = value.slice(0, start) + text + value.slice(end);
+      chatInput.selectionStart = chatInput.selectionEnd = start + text.length;
+      updateInputSize();
+
+      if (keepFocus) {
+        setTimeout(function () {
+          chatInput.focus();
+        }, 0);
+      }
+    }
+
+    sendButton.onclick = function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      var keyboardEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true
+      });
+
+      chatInput.dispatchEvent(keyboardEvent);
+      setTimeout(closeInputPanel, 80);
+    };
+
+    emojiButton.addEventListener('pointerdown', function (event) {
+      var keepFocus = document.activeElement === chatInput;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      emojiPicker.hidden = !emojiPicker.hidden;
+
+      if (keepFocus) {
+        setTimeout(function () {
+          chatInput.focus();
+        }, 0);
+      }
+    });
+
+    emojiButton.onclick = function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    emojiPicker.addEventListener('pointerdown', function (event) {
+      var target = event.target.closest('button[data-emoji]');
+      var keepFocus = document.activeElement === chatInput;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!target) return;
+      insertComposerText(target.getAttribute('data-emoji') || target.textContent, keepFocus);
+    });
+
+    emojiPicker.onclick = function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    document.addEventListener('click', function (event) {
+      if (composer.contains(event.target)) return;
+      closeInputPanel();
+    });
+  });
+}());

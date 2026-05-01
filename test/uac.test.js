@@ -35,6 +35,16 @@ describe('Checking UAC module', () => {
     expect(resp).to.be.false;
   });
 
+  it('should allow unicode nickname characters supported by the server', async () => {
+    const resp = importedModule.verifyNickname('测试-user_123');
+    expect(resp).to.be.true;
+  });
+
+  it('should reject non-string nickname values', async () => {
+    expect(importedModule.verifyNickname(1234)).to.be.false;
+    expect(importedModule.verifyNickname(null)).to.be.false;
+  });
+
   it('should return default perms', async () => {
     const resp = importedModule.getUserPerms(false);
     expect(resp).to.be.an('object');

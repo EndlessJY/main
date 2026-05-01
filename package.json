@@ -9,28 +9,21 @@
     "url": "git+https://github.com/hack-chat/main.git"
   },
   "engines": {
-    "node": ">= 10.15.1",
-    "npm": ">= 6.7.0"
+    "node": ">= 20",
+    "npm": ">= 10"
   },
   "scripts": {
-    "start": "pm2 startOrReload pm2.config.cjs",
-    "stop": "pm2 stop pm2.config.cjs && pm2 delete pm2.config.cjs",
-    "logs": "pm2 logs",
-    "clear": "pm2 flush",
-    "status": "pm2 list",
-    "refresh": "pm2 flush && pm2 stop pm2.config.cjs && pm2 delete pm2.config.cjs",
-    "postinstall": "npm run config",
+    "start": "node ./scripts/start.js",
     "config": "node ./scripts/config.js",
     "lint": "eslint -- . ",
     "lint:fix": "eslint --fix -- . ",
-    "test_run": "clear && npm run refresh && npm start && npm run logs && npm run stop",
-    "test": "npm run lint && c8 mocha --exit ./test/*.test.js",
+    "test": "npm run lint && mocha --exit ./test/*.test.js",
+    "coverage": "c8 --check-coverage=false mocha --exit ./test/*.test.js",
     "makedocs": "jsdoc -c jsdoc.json"
   },
   "author": "marzavec",
   "license": "MIT",
   "dependencies": {
-    "@coral-xyz/anchor": "^0.32.1",
     "@solana/kit": "^5.1.0",
     "@solana/web3.js": "^1.98.4",
     "ascii-captcha": "^0.0.3",
@@ -41,18 +34,22 @@
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^3.0.0",
     "markdown-escape": "^2.0.0",
-    "pm2": "^5.3.0",
     "tweetnacl": "^1.0.3",
     "uwuify": "^1.0.1"
   },
   "devDependencies": {
     "c8": "^7.11.0",
     "chai": "^4.3.6",
-    "codecov": "^3.8.3",
     "eslint": "^8.9.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
-    "mocha": "^11.1.0",
-    "nyc": "^15.1.0"
+    "mocha": "^11.1.0"
+  },
+  "overrides": {
+    "uuid": "^14.0.0",
+    "mocha": {
+      "diff": "^9.0.0",
+      "serialize-javascript": "^7.0.5"
+    }
   }
 }

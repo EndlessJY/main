@@ -44,6 +44,10 @@ export async function run({
 
   const targetChannel = socket.channel;
 
+  if (typeof targetChannel === 'undefined') {
+    return false;
+  }
+
   if (typeof core.locked[targetChannel] === 'undefined' || core.locked[targetChannel] === false) {
     return server.reply({
       cmd: 'warn',
