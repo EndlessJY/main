@@ -47,11 +47,9 @@ docker pull ghcr.io/endlessjy/main:latest
 docker run --rm -p 3000:3000 -p 6060:6060 ghcr.io/endlessjy/main:latest
 ```
 
-如果镜像包保持私有，需要先登录 GHCR：
+镜像包已公开，拉取时不需要 GitHub Token。
 
-```bash
-echo <GITHUB_TOKEN> | docker login ghcr.io -u <GITHUB_USERNAME> --password-stdin
-```
+项目仓库为公开仓库，但仍是独立仓库，不是原 `hack-chat/main` 的 fork。
 
 自动发布的标签：
 
