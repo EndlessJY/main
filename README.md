@@ -30,6 +30,23 @@ docker run --rm -p 3000:3000 -p 6060:6060 hack-chat-cn
 
 Docker 镜像会排除本地依赖、日志、运行密钥、备份文件和临时修复文件，避免把本机运行数据打包进镜像。
 
+## Docker Hub 自动发布
+
+本仓库已配置 GitHub Actions，在推送 `master` 分支、推送 `v*` 标签或手动触发 workflow 时自动构建并上传 Docker 镜像到 Docker Hub。
+
+需要在 GitHub 仓库的 `Settings -> Secrets and variables -> Actions` 中配置：
+
+- `DOCKERHUB_USERNAME`：Docker Hub 用户名。
+- `DOCKERHUB_TOKEN`：Docker Hub Access Token。
+- `DOCKERHUB_REPOSITORY`：可选，完整镜像仓库名，例如 `endlessjy/main`。如果不配置，默认使用 `DOCKERHUB_USERNAME/hack-chat`。
+
+自动发布的标签：
+
+- `latest`：`master` 分支最新构建。
+- `master`：分支名标签。
+- `sha-<commit>`：提交短哈希标签。
+- `vX.Y.Z` 标签推送时会额外生成语义化版本标签。
+
 ## 常用命令
 
 ```bash
